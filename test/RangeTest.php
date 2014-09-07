@@ -278,4 +278,20 @@ class RangeTest extends TestBase {
 		$simple = new Matches(Token::WHITESPACE);
 		$range = new Range($simple, 4, 3);
 	}
+	
+	/**
+	 * Verify that matchers passed into sequence can be used to access the matched data
+	 * @test
+	 */
+	public function testMatcherIsolation() {
+		$tokens = $this->getTokens();
+		$choice = new Choice(Token::NEWLINE, Token::WHITESPACE);
+		$matcher = new Range($choice, 2, 2);
+		
+		// Should have matched WHITESPACE NEWLINE
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 2), $tokens);
+		
+		// Verify first choice matched WHITESPACE and is not changed
+		$this->assertMatchSuccess($choice, \array_slice($tokens, 0, 1));
+	}
 }

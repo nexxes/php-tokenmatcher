@@ -77,12 +77,12 @@ class Range implements MatcherInterface {
 	 */
 	public function match(array $tokens, $offset = 0) {
 		$this->executedMatcher = []; // Clean old debug info
-		
+		$matcher = $this->matcher; // Later clone matcher
 		$consumed = 0; // Number of tokens consumed
 		
 		while (\count($this->executedMatcher) < $this->max) {
-			$matched = $this->matcher->match($tokens, $offset+$consumed);
-			$this->executedMatcher[] = $this->matcher->debug(); // Safe debug information
+			$matched = $matcher->match($tokens, $offset+$consumed);
+			$this->executedMatcher[] = clone $matcher; // Readonly debug information
 			
 			// End of matching process
 			if (false === $matched) { break; }
@@ -90,9 +90,9 @@ class Range implements MatcherInterface {
 			// Do not repeat matchers that are ok but read no tokens (e.g. like an optional matcher)
 			if ($matched === 0) { break; }
 			
-			$consumed += $matched;
+			$consumed += $matched; // Total number of tokens
+			$matcher = clone $this->matcher; // Prevent matcher from being altered on subsequent calls
 		}
-		
 		
 		if ((0 === $this->min) // We did not need to match anything
 			|| (// Verify matcher has executed at least $min times and the $minth matcher was successful
