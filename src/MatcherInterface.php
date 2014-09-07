@@ -36,9 +36,10 @@ interface MatcherInterface {
 	function match(array $tokens, $offset = 0);
 	
 	/**
-	 * Return a DebugInterface instances that represents the event of the last matching
-	 *  or a list of DebugInterface instances for multiple events
-	 * @return \nexxes\tokenizer\DebugInterface|array<\nexxes\tokenizer\DebugInterface>
+	 * Return a MatcherInterface instance that represents the last matching process.
+	 * The returned instance must not change if the matcher is executed again.
+	 * 
+	 * @return \nexxes\tokenmatcher\MatcherInterface
 	 */
 	function debug();
 	

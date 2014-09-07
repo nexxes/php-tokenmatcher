@@ -20,9 +20,22 @@ namespace nexxes\tokenmatcher;
 class Matches implements MatcherInterface {
 	/**
 	 * The token type to match the next token on
-	 * @var string|array<string>
+	 * @var string
 	 */
 	private $tokenType;
+	
+	/**
+	 * Status of the last matching process, null means not matched yet
+	 * @var mixed
+	 */
+	private $status = self::STATUS_VIRGIN;
+	
+	/**
+	 * The token that matched in the last matching process
+	 * @var \nexxes\token\Tokenizer
+	 */
+	private $matched;
+	
 	
 	/**
 	 * @param string $tokenType
@@ -35,10 +48,63 @@ class Matches implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function match(array $tokens, $offset = 0) {
+		$this->matched = null;
+		
 		// Next token must be set
-		if (!isset($tokens[$offset])) { return false; }
+		if (!isset($tokens[$offset])) {
+			$this->status = self::STATUS_EMPTY;
+			return false;
+		}
 		
 		// Try to match
-		return ($tokens[$offset]->type === $this->tokenType ? 1 : false);
+		if ($tokens[$offset]->type === $this->tokenType) {
+			$this->matched = $tokens[$offset];
+			$this->status = self::STATUS_SUCCESS;
+			return 1;
+		}
+		
+		else {
+			$this->status = self::STATUS_FAILURE;
+			return false;
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function debug() {
+		return clone $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function status() {
+		return $this->status;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function success() {
+		return ($this->status === self::STATUS_SUCCESS);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function tokens() {
+		if ($this->status === self::STATUS_SUCCESS) {
+			return [ $this->matched ];
+		} else {
+			return [];
+		}
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString() {
+		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for type: "' . $this->tokenType . '", status: "' . $this->status . '"' . PHP_EOL;
 	}
 }
