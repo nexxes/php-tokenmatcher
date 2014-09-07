@@ -24,6 +24,19 @@ class Choice implements MatcherInterface {
 	private $tokenTypes;
 	
 	/**
+	 * Status of the last matching process, null means not matched yet
+	 * @var mixed
+	 */
+	private $status = self::STATUS_VIRGIN;
+	
+	/**
+	 * The token that matched in the last matching process
+	 * @var \nexxes\token\Tokenizer
+	 */
+	private $matched;
+	
+	
+	/**
 	 * @param string $tokenType1
 	 * @param string $tokenType2
 	 */
@@ -35,10 +48,61 @@ class Choice implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function match(array $tokens, $offset = 0) {
+		$this->matched = null;
+		
 		// Next token must be set
-		if (!isset($tokens[$offset])) { return false; }
+		if (!isset($tokens[$offset])) {
+			$this->status = self::STATUS_EMPTY;
+			return false;
+		}
 		
 		// Try to match
-		return (\in_array($tokens[$offset]->type, $this->tokenTypes) ? 1 : false);
+		if (\in_array($tokens[$offset]->type, $this->tokenTypes)) {
+			$this->matched = $tokens[$offset];
+			$this->status = self::STATUS_SUCCESS;
+			return 1;
+		} else {
+			$this->status = self::STATUS_FAILURE;
+			return false;
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function debug() {
+		return clone $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function status() {
+		return $this->status;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function success() {
+		return ($this->status === self::STATUS_SUCCESS);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function tokens() {
+		if ($this->status === self::STATUS_SUCCESS) {
+			return [ $this->matched ];
+		} else {
+			return [];
+		}
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString() {
+		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for types (' . \implode(', ', $this->tokenTypes) . '), status: "' . $this->status . '"' . ($this->status === self::STATUS_SUCCESS ? ', matched type ' . $this->matched->type : '') . PHP_EOL;
 	}
 }
