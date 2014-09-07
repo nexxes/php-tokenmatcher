@@ -11,6 +11,8 @@
 
 namespace nexxes\tokenmatcher;
 
+use \nexxes\tokenizer\Token;
+
 /**
  * Matches tries to match the next token to the stored token type.
  * It can also be initialized with multiple token names, then one of the tokens must match.
@@ -96,10 +98,25 @@ class Matches implements MatcherInterface {
 	 * Allows a child to store a matcher in $matched instead of a token
 	 */
 	public function tokens() {
-		return ($this->success()
-			? ($this->matched instanceof MatcherInterface ? $this->matched->tokens() : [ $this->matched ])
-			: []
-		);
+		if ($this->success()) {
+			// Get tokens of contained matcher
+			if ($this->matched instanceof MatcherInterface) {
+				return $this->matched->tokens();
+			}
+			
+			// Allow children to store arrays of matches here
+			elseif(\is_array($this->matched)) {
+				return $this->matched;
+			}
+			
+			// Default behaviour on success
+			elseif ($this->matched instanceof Token) {
+				return [ $this->matched ];
+			}
+		}
+		
+		// Fallback
+		return [];
 	}
 	
 	/**
