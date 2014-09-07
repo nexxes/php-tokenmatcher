@@ -1,0 +1,25 @@
+{
+	"name": "nexxes/tokenmatcher",
+	"description": "PHP library to match tokenstreams (arrays of tokens) for later parsing.",
+	"keywords": ["parser", "token", "tokenizer", "matching", "filter"],
+	"license": "LGPL-3.0",
+	"homepage": "https://github.com/nexxes/php-tokenmatcher",
+	
+	"authors": [
+		{
+			"name": "Dennis Birkholz, nexxes Informationstechnik GmbH",
+			"email": "dennis.birkholz@nexxes.net"
+		}
+	],
+	
+	"autoload": {
+		"psr-4": {
+			"nexxes\\tokenmatcher\\": "src/"
+		}
+	},
+	
+	"require": {
+		"php": ">=5.4.0",
+		"nexxes/tokenizer": "*"
+	}
+}
