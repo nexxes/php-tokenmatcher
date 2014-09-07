@@ -30,14 +30,23 @@ class Sequence implements MatcherInterface {
 	
 	
 	/**
-	 * Supply as many matchers as required to construct a sequence
+	 * Supply as many matchers as required to construct a sequence.
+	 * If a matcher is supplied multiple times, each subsequent matcher is replaced by a copy to keep matched data clean
 	 * 
 	 * @param \nexxes\tokenmatcher\MatcherInterface $firstPattern
 	 * @param \nexxes\tokenmatcher\MatcherInterface $secondPattern
 	 * @param \nexxes\tokenmatcher\MatcherInterface $thirdMatcher
 	 */
 	public function __construct(MatcherInterface $firstPattern, MatcherInterface $secondPattern = null, MatcherInterface $thirdMatcher = null) {
-		$this->sequence = \func_get_args();
+		$args = \func_get_args();
+		
+		foreach ($args AS $matcher) {
+			if (\in_array($matcher, $this->sequence, true)) {
+				$this->sequence[] = clone $matcher;
+			} else {
+				$this->sequence[] = $matcher;
+			}
+		}
 	}
 	
 	/**

@@ -171,4 +171,20 @@ class SequenceTest extends TestBase {
 		$this->assertMatchSuccess($debug, \array_slice($tokens, 0, 0));
 		$this->assertEquals($debugString, (string)$debug);
 	}
+	
+	/**
+	 * Verify that matchers passed into sequence can be used to access the matched data
+	 * @test
+	 */
+	public function testMatcherIsolation() {
+		$tokens = $this->getTokens();
+		$choice = new Choice(Token::NEWLINE, Token::WHITESPACE);
+		$matcher = new Sequence($choice, $choice);
+		
+		// Should have matched WHITESPACE NEWLINE
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 2), $tokens);
+		
+		// Verify first choice matched WHITESPACE and is not changed
+		$this->assertMatchSuccess($choice, \array_slice($tokens, 0, 1));
+	}
 }
