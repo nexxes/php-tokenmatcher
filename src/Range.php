@@ -47,12 +47,6 @@ class Range implements MatcherInterface {
 	private $status = self::STATUS_VIRGIN;
 	
 	/**
-	 * The token that matched in the last matching process
-	 * @var \nexxes\tokenizer\Token
-	 */
-	private $matched;
-	
-	/**
 	 * List of the matcher objects executed during the last run
 	 * @var array<\nexxes\tokenmatcher\MatcherInterface>
 	 */
@@ -82,7 +76,6 @@ class Range implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function match(array $tokens, $offset = 0) {
-		$this->matched = []; // Clean old results
 		$this->executedMatcher = []; // Clean old debug info
 		
 		$consumed = 0; // Number of tokens consumed
