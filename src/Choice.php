@@ -24,7 +24,7 @@ class Choice implements MatcherInterface {
 	private $tokenTypes;
 	
 	/**
-	 * Status of the last matching process, null means not matched yet
+	 * Status of the last matching process
 	 * @var mixed
 	 */
 	private $status = self::STATUS_VIRGIN;
