@@ -18,15 +18,59 @@ namespace nexxes\tokenmatcher;
  */
 class Tail implements MatcherInterface {
 	/**
+	 * Status of the last matching process, null means not matched yet
+	 * @var mixed
+	 */
+	private $status = self::STATUS_VIRGIN;
+	
+	
+	/**
 	 * {@inheritdoc}
 	 */
 	public function match(array $tokens, $offset = 0) {
 		if (\count($tokens) === $offset) {
-			echo __CLASS__ . ' matched the end of the token stream' . PHP_EOL;
+			$this->status = self::STATUS_SUCCESS;
 			return 0;
 		} else {
-			echo __CLASS__ . ' did not match' . PHP_EOL;
+			$this->status = self::STATUS_FAILURE;
 			return false;
 		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function debug() {
+		return clone $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function status() {
+		return $this->status;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function success() {
+		return ($this->status === self::STATUS_SUCCESS);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function tokens() {
+		return [];
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString() {
+		return (new \ReflectionClass(__CLASS__))->getShortName()
+			. ' with status "' . $this->status . '"'
+			. PHP_EOL;
 	}
 }
