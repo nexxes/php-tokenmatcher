@@ -22,19 +22,19 @@ class Matches implements MatcherInterface {
 	 * The token type to match the next token on
 	 * @var string
 	 */
-	private $tokenType;
+	protected $tokenType;
 	
 	/**
 	 * Status of the last matching process
 	 * @var mixed
 	 */
-	private $status = self::STATUS_VIRGIN;
+	protected $status = self::STATUS_VIRGIN;
 	
 	/**
 	 * The token that matched in the last matching process
 	 * @var \nexxes\tokenizer\Token
 	 */
-	private $matched;
+	protected $matched;
 	
 	
 	/**
@@ -105,6 +105,6 @@ class Matches implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for type "' . $this->tokenType . '" with status "' . $this->status . '"';
+		return (new \ReflectionClass(static::class))->getShortName() . ' for type "' . $this->tokenType . '" with status "' . $this->status . '"';
 	}
 }
