@@ -17,22 +17,22 @@ use \nexxes\tokenizer\Token;
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  * @covers \nexxes\tokenmatcher\Sequence
  */
-class SequenceTest extends \PHPUnit_Framework_TestCase {
+class SequenceTest extends TestBase {
 	private function getTokens() {
 		return [
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::NEWLINE, 0, 0, ' '),	
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::NEWLINE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::NEWLINE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X1
+			new Token(Token::NEWLINE, 0, 0, ' '),	   // X2
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X3
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X4
+			new Token(Token::NEWLINE, 0, 0, ' '),    // X5
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X6
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X7
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X8
+			new Token(Token::NEWLINE, 0, 0, ' '),    // X9
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X10
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X11
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X12
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X13
 		];
 	}
 	
@@ -45,20 +45,41 @@ class SequenceTest extends \PHPUnit_Framework_TestCase {
 		$matchNewline = new Matches(Token::NEWLINE);
 		
 		// Match a sequence of simple tokens
-		$sequenceMatcher = new Sequence($matchWhitespace, $matchNewline, $matchWhitespace, $matchWhitespace);
-		$this->assertSame(4, $sequenceMatcher->match($tokens));
-		$this->assertSame(4, $sequenceMatcher->match($tokens,  0));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  1));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  2));
-		$this->assertSame(4, $sequenceMatcher->match($tokens,  3));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  4));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  5));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  6));
-		$this->assertSame(4, $sequenceMatcher->match($tokens,  7));
+		$matcher = new Sequence($matchWhitespace, $matchNewline, $matchWhitespace2 = clone $matchWhitespace, $matchWhitespace3 = clone $matchWhitespace);
 		
+		// Match X1
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 4), $tokens);
+		
+		// Test later that it is unchanged
+		$debug = $matcher->debug();
+		$debugString = (string)$debug;
+		
+		// Match X1 (use explicit offset 0)
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 4), $tokens, 0);
+		
+		// 2 fails to X4
+		$this->assertExecuteFailure($matcher, $tokens, 1);
+		$this->assertExecuteFailure($matcher, $tokens, 2);
+		
+		// Match X4
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 3, 4), $tokens, 3);
+		
+		// 3 fails to X8
+		$this->assertExecuteFailure($matcher, $tokens, 4);
+		$this->assertExecuteFailure($matcher, $tokens, 5);
+		$this->assertExecuteFailure($matcher, $tokens, 6);
+		
+		// Match X8
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 7, 4), $tokens, 7);
+		
+		// Only fails there after
 		for ($i=8; $i<25; ++$i) {
-			$this->assertFalse($sequenceMatcher->match($tokens, $i));
+			$this->assertExecuteFailure($matcher, $tokens, $i);
 		}
+		
+		// Verify $debug did not change
+		$this->assertMatchSuccess($debug, \array_slice($tokens, 0, 4));
+		$this->assertEquals($debugString, (string)$debug);
 	}
 	
 	/**
@@ -68,25 +89,47 @@ class SequenceTest extends \PHPUnit_Framework_TestCase {
 		$tokens = $this->getTokens();
 		$matchWhitespace = new Matches(Token::WHITESPACE);
 		$matchNewline = new Matches(Token::NEWLINE);
-		$matchOptionalNewline = new Optional($matchNewline);
+		$matchOptionalNewline = new Optional(clone $matchNewline);
 		
 		// Match a sequence of simple tokens
-		$sequenceMatcher = new Sequence($matchWhitespace, $matchOptionalNewline, $matchWhitespace, $matchWhitespace);
-		$this->assertSame(4, $sequenceMatcher->match($tokens));
-		$this->assertSame(4, $sequenceMatcher->match($tokens,  0));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  1));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  2));
-		$this->assertSame(4, $sequenceMatcher->match($tokens,  3));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  4));
-		$this->assertSame(3, $sequenceMatcher->match($tokens,  5));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  6));
-		$this->assertSame(4, $sequenceMatcher->match($tokens,  7));
-		$this->assertFalse(  $sequenceMatcher->match($tokens,  8));
-		$this->assertSame(3, $sequenceMatcher->match($tokens,  9));
-		$this->assertSame(3, $sequenceMatcher->match($tokens, 10));
-		$this->assertFalse(  $sequenceMatcher->match($tokens, 11));
-		$this->assertFalse(  $sequenceMatcher->match($tokens, 12));
-		$this->assertFalse(  $sequenceMatcher->match($tokens, 13));
+		$matcher = new Sequence($matchWhitespace, $matchOptionalNewline, clone $matchWhitespace, clone $matchWhitespace);
+		
+		// Match X1
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 4), $tokens);
+		
+		// Test later that it is unchanged
+		$debug = $matcher->debug();
+		$debugString = (string)$debug;
+		
+		// Match X1 (use explicit offset 0)
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 4), $tokens, 0);
+		$this->assertExecuteFailure($matcher, $tokens, 1);
+		$this->assertExecuteFailure($matcher, $tokens, 2);
+		
+		// Match X4
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 3, 4), $tokens, 3);
+		$this->assertExecuteFailure($matcher, $tokens, 4);
+		
+		// Match X6 (no newline)
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 5, 3), $tokens, 5);
+		$this->assertExecuteFailure($matcher, $tokens, 6);
+		
+		// Match X8
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 7, 4), $tokens, 7);
+		$this->assertExecuteFailure($matcher, $tokens, 8);
+		
+		// Match X10 and X11
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 9, 3), $tokens, 9);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 10, 4), $tokens, 10);
+		
+		// Only fails there after
+		for ($i=11; $i<25; ++$i) {
+			$this->assertExecuteFailure($matcher, $tokens, $i);
+		}
+		
+		// Verify $debug did not change
+		$this->assertMatchSuccess($debug, \array_slice($tokens, 0, 4));
+		$this->assertEquals($debugString, (string)$debug);
 	}
 	
 	/**
@@ -98,23 +141,34 @@ class SequenceTest extends \PHPUnit_Framework_TestCase {
 		$matchOptionalNewline = new Optional($matchNewline);
 		
 		// Match a sequence of simple tokens
-		$sequenceMatcher = new Sequence($matchOptionalNewline, $matchOptionalNewline, $matchOptionalNewline, $matchOptionalNewline);
-		$this->assertSame(0, $sequenceMatcher->match($tokens));
-		$this->assertSame(0, $sequenceMatcher->match($tokens,  0));
-		$this->assertSame(1, $sequenceMatcher->match($tokens,  1));
-		$this->assertSame(0, $sequenceMatcher->match($tokens,  2));
-		$this->assertSame(0, $sequenceMatcher->match($tokens,  3));
-		$this->assertSame(1, $sequenceMatcher->match($tokens,  4));
-		$this->assertSame(0, $sequenceMatcher->match($tokens,  5));
-		$this->assertSame(0, $sequenceMatcher->match($tokens,  6));
-		$this->assertSame(0, $sequenceMatcher->match($tokens,  7));
-		$this->assertSame(1, $sequenceMatcher->match($tokens,  8));
-		$this->assertSame(0, $sequenceMatcher->match($tokens,  9));
-		$this->assertSame(0, $sequenceMatcher->match($tokens, 10));
-		$this->assertSame(0, $sequenceMatcher->match($tokens, 11));
-		$this->assertSame(0, $sequenceMatcher->match($tokens, 12));
-		$this->assertSame(0, $sequenceMatcher->match($tokens, 13));
-		$this->assertSame(0, $sequenceMatcher->match($tokens, 14));
-		$this->assertSame(0, $sequenceMatcher->match($tokens, 15));
+		$matcher = new Sequence($matchOptionalNewline, clone $matchOptionalNewline, clone $matchOptionalNewline, clone $matchOptionalNewline);
+		
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens);
+		
+		// Test later that it is unchanged
+		$debug = $matcher->debug();
+		$debugString = (string)$debug;
+		
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 0);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 1, 1), $tokens, 1);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 2);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 3);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 4, 1), $tokens, 4);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 5);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 6);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 7);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 8, 1), $tokens, 8);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 9);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 10);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 11);
+		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, 12);
+		
+		// Only fails there after
+		for ($i=13; $i<25; ++$i) {
+			$this->assertExecuteSuccess($matcher, \array_slice($tokens, 0, 0), $tokens, $i);
+		}
+		
+		$this->assertMatchSuccess($debug, \array_slice($tokens, 0, 0));
+		$this->assertEquals($debugString, (string)$debug);
 	}
 }

@@ -20,20 +20,19 @@ use \nexxes\tokenizer\Token;
 class RangeTest extends TestBase {
 	private function getTokens() {
 		return [
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::NEWLINE, 0, 0, ' '),	
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::NEWLINE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::NEWLINE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::WHITESPACE, 0, 0, ' '),
-			new Token(Token::NEWLINE, 0, 0, ' '),
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X1
+			new Token(Token::NEWLINE, 0, 0, ' '),	   // X2
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X3
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X4
+			new Token(Token::NEWLINE, 0, 0, ' '),    // X5
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X6
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X7
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X8
+			new Token(Token::NEWLINE, 0, 0, ' '),    // X9
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X10
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X11
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X12
+			new Token(Token::WHITESPACE, 0, 0, ' '), // X13
 		];
 	}
 	
