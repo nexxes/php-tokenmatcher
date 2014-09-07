@@ -28,11 +28,7 @@ class Matches implements MatcherInterface {
 	 * @param string $tokenType
 	 */
 	public function __construct($tokenType) {
-		if (\func_num_args() > 1) {
-			$this->tokenType = \func_get_args();
-		} else {
-			$this->tokenType = $tokenType;
-		}
+		$this->tokenType = $tokenType;
 	}
 	
 	/**
@@ -43,10 +39,6 @@ class Matches implements MatcherInterface {
 		if (!isset($tokens[$offset])) { return false; }
 		
 		// Try to match
-		if (\is_array($this->tokenType)) {
-			return (\in_array($tokens[$offset]->type, $this->tokenType) ? 1 : false);
-		} else {
-			return ($tokens[$offset]->type === $this->tokenType ? 1 : false);
-		}
+		return ($tokens[$offset]->type === $this->tokenType ? 1 : false);
 	}
 }
