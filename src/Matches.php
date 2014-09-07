@@ -32,7 +32,7 @@ class Matches implements MatcherInterface {
 	
 	/**
 	 * The token that matched in the last matching process
-	 * @var \nexxes\token\Tokenizer
+	 * @var \nexxes\tokenizer\Token
 	 */
 	private $matched;
 	

@@ -31,7 +31,7 @@ class Choice implements MatcherInterface {
 	
 	/**
 	 * The token that matched in the last matching process
-	 * @var \nexxes\token\Tokenizer
+	 * @var \nexxes\tokenizer\Tokenizer
 	 */
 	private $matched;
 	
