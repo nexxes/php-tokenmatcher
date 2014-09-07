@@ -15,7 +15,7 @@ use \nexxes\tokenizer\Token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
- * @covers \nexxes\tokenmatcher\Choice
+ * @covers \nexxes\tokenmatcher\Either
  */
 class EitherTest extends TestBase {
 	public function testMatches() {

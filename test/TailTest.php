@@ -15,7 +15,7 @@ use \nexxes\tokenizer\Token;
 
 /**
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
- * @covers \nexxes\tokenmatcher\Choice
+ * @covers \nexxes\tokenmatcher\Tail
  */
 class TailTest extends TestBase {
 	public function testMatches() {
