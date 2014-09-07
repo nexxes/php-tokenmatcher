@@ -30,23 +30,23 @@ class MatchesTest extends TestBase {
 		
 		$this->assertSame(MatcherInterface::STATUS_VIRGIN, $matcher->status());
 		
-		// Match first whitespace
+		// Match 1st whitespace
 		$this->assertExecuteSuccess($matcher, $tokens[0], $tokens);
 		
 		// Test later that it is unchanged
 		$debug = $matcher->debug();
 		$debugString = (string)$debug;
 		
-		// Match first whitespace (use explicit offset 0)
+		// Match 1st whitespace (use explicit offset 0)
 		$this->assertExecuteSuccess($matcher, $tokens[0], $tokens, 0);
 		
-		// Fail to match the first newline
+		// Fail on 1st newline
 		$this->assertExecuteFailure($matcher, $tokens, 1);
 		
-		// Match second whitespace
+		// Match 2nd whitespace
 		$this->assertExecuteSuccess($matcher, $tokens[2], $tokens, 2);
 		
-		// Fail to match the second newline
+		// Fail on 2nd newline
 		$this->assertExecuteFailure($matcher, $tokens, 3);
 		
 		// Nothing more to match
