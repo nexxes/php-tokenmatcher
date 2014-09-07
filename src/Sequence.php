@@ -16,17 +16,11 @@ namespace nexxes\tokenmatcher;
  * 
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class Sequence implements MatcherInterface {
+class Sequence extends Matches {
 	/**
 	 * @var array<\nexxes\tokenmatcher\MatcherInterface>
 	 */
-	private $sequence = [];
-	
-	/**
-	 * Status of the last matching process
-	 * @var mixed
-	 */
-	private $status = self::STATUS_VIRGIN;
+	protected $sequence = [];
 	
 	
 	/**
@@ -73,29 +67,8 @@ class Sequence implements MatcherInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function debug() {
-		return clone $this;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function status() {
-		return $this->status;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function success() {
-		return ($this->status === self::STATUS_SUCCESS);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function tokens() {
-		if ($this->status === self::STATUS_SUCCESS) {
+		if ($this->success()) {
 			$r = [];
 			foreach ($this->sequence AS $matcher) {
 				$r = \array_merge($r, $matcher->tokens());
@@ -112,10 +85,10 @@ class Sequence implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName()
-			. ' with status "' . $this->status . '"'
+		return (new \ReflectionClass(static::class))->getShortName()
+			. ' has status "' . $this->status . '"'
 			. PHP_EOL
-			. self::INDENTATION . \str_replace(PHP_EOL, PHP_EOL . self::INDENTATION, \implode(PHP_EOL, $this->sequence));
+			. $this->indentArray($this->sequence);
 	}
 	
 	/**

@@ -24,33 +24,27 @@ namespace nexxes\tokenmatcher;
  * 
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class Range implements MatcherInterface {
+class Range extends Matches {
 	/**
 	 * @var \nexxes\tokenmatcher\MatcherInterface
 	 */
-	private $matcher;
+	protected $matcher;
 	
 	/**
 	 * @var int
 	 */
-	private $min;
+	protected $min;
 	
 	/**
 	 * @var int
 	 */
-	private $max;
-	
-	/**
-	 * Status of the last matching process
-	 * @var mixed
-	 */
-	private $status = self::STATUS_VIRGIN;
+	protected $max;
 	
 	/**
 	 * List of the matcher objects executed during the last run
 	 * @var array<\nexxes\tokenmatcher\MatcherInterface>
 	 */
-	private $executedMatcher = [];
+	protected $executedMatcher = [];
 	
 	
 	/**
@@ -113,29 +107,8 @@ class Range implements MatcherInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function debug() {
-		return clone $this;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function status() {
-		return $this->status;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function success() {
-		return ($this->status === self::STATUS_SUCCESS);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function tokens() {
-		if ($this->status === self::STATUS_SUCCESS) {
+		if ($this->success()) {
 			$r = [];
 			
 			foreach ($this->executedMatcher AS $matcher) {
@@ -152,11 +125,11 @@ class Range implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName()
+		return (new \ReflectionClass(static::class))->getShortName()
 			. ' for limits {' . $this->min . ', ' . $this->max . '}'
-			. ' with status "' . $this->status . '"'
+			. ' has status "' . $this->status . '"'
 			. (\count($this->executedMatcher) ? ' had ' . (\count($this->executedMatcher) - ($this->executedMatcher[\count($this->executedMatcher)-1]->success() ? 0 : 1)) . ' successful matches' : '')
 			. PHP_EOL
-			. self::INDENTATION . \str_replace(PHP_EOL, PHP_EOL . self::INDENTATION, \implode(PHP_EOL, $this->executedMatcher));
+			. $this->indentArray($this->executedMatcher);
 	}
 }

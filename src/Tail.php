@@ -16,12 +16,12 @@ namespace nexxes\tokenmatcher;
  *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class Tail implements MatcherInterface {
+class Tail extends Matches {
 	/**
-	 * Status of the last matching process
-	 * @var mixed
+	 * Remove required argument from parent
 	 */
-	private $status = self::STATUS_VIRGIN;
+	public function __construct() {
+	}
 	
 	
 	/**
@@ -36,28 +36,7 @@ class Tail implements MatcherInterface {
 			return false;
 		}
 	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function debug() {
-		return clone $this;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function status() {
-		return $this->status;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function success() {
-		return ($this->status === self::STATUS_SUCCESS);
-	}
-
+	
 	/**
 	 * {@inheritdoc}
 	 */
@@ -69,8 +48,8 @@ class Tail implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName()
-			. ' with status "' . $this->status . '"'
+		return (new \ReflectionClass(static::class))->getShortName()
+			. ' has status "' . $this->status . '"'
 			. PHP_EOL;
 	}
 }

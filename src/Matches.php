@@ -92,19 +92,32 @@ class Matches implements MatcherInterface {
 
 	/**
 	 * {@inheritdoc}
+	 * 
+	 * Allows a child to store a matcher in $matched instead of a token
 	 */
 	public function tokens() {
-		if ($this->status === self::STATUS_SUCCESS) {
-			return [ $this->matched ];
-		} else {
-			return [];
-		}
+		return ($this->success()
+			? ($this->matched instanceof MatcherInterface ? $this->matched->tokens() : [ $this->matched ])
+			: []
+		);
 	}
 	
 	/**
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(static::class))->getShortName() . ' for type "' . $this->tokenType . '" with status "' . $this->status . '"';
+		return (new \ReflectionClass(static::class))->getShortName()
+			. ' for type "' . $this->tokenType . '"'
+			. ' has status "' . $this->status . '"';
+	}
+	
+	
+	/**
+	 * Indent all elements in the supplied array.
+	 * The array must contain either strings or objects that can be casted to strings.
+	 * @param array $elements
+	 */
+	protected function indentArray(array $elements) {
+		return self::INDENTATION . \str_replace(PHP_EOL, PHP_EOL . self::INDENTATION, \implode(PHP_EOL, $elements));
 	}
 }

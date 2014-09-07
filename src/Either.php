@@ -17,23 +17,17 @@ namespace nexxes\tokenmatcher;
  *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class Either implements MatcherInterface {
+class Either extends Matches {
 	/**
 	 * @var array<\nexxes\tokenmatcher\MatcherInterface>
 	 */
-	private $choices = [];
-	
-	/**
-	 * Status of the last matching process
-	 * @var mixed
-	 */
-	private $status = self::STATUS_VIRGIN;
+	protected $choices = [];
 	
 	/**
 	 * The matcher that matched successfully
 	 * @var \nexxes\tokenmatcher\MatcherInterface
 	 */
-	private $match;
+	protected $matched;
 	
 	
 	/**
@@ -53,54 +47,26 @@ class Either implements MatcherInterface {
 	public function match(array $tokens, $offset = 0) {
 		for ($i=0; $i<\count($this->choices); ++$i) {
 			if (false !== ($matched = $this->choices[$i]->match($tokens, $offset))) {
-				$this->match = $this->choices[$i];
+				$this->matched = $this->choices[$i];
 				$this->status = self::STATUS_SUCCESS;
 				return $matched;
 			}
 		}
 		
-		$this->match = null; // Cleanup old run
+		$this->matched = null; // Cleanup old run
 		$this->status = self::STATUS_FAILURE;
 		return false;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function debug() {
-		return clone $this;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function status() {
-		return $this->status;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function success() {
-		return ($this->status === self::STATUS_SUCCESS);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function tokens() {
-		return ($this->success() ? $this->match->tokens() : []);
 	}
 	
 	/**
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName()
-			. ' with status "' . $this->status . '"'
-			. ($this->success() ? ' match choice #' . (\array_search($this->match, $this->choices, true)+1) : '')
+		return (new \ReflectionClass(static::class))->getShortName()
+			. ' has status "' . $this->status . '"'
+			. ($this->success() ? ' matches choice #' . (\array_search($this->matched, $this->choices, true)+1) : '')
 			. PHP_EOL
-			. self::INDENTATION . \str_replace(PHP_EOL, PHP_EOL . self::INDENTATION, \implode(PHP_EOL, $this->choices));
+			. $this->indentArray($this->choices);
 	}
 	
 	/**
@@ -112,8 +78,8 @@ class Either implements MatcherInterface {
 			$choice = $this->choices[$i];
 			$this->choices[$i] = clone $choice;
 			
-			if ($this->match === $choice) {
-				$this->match = $this->choices[$i];
+			if ($this->matched === $choice) {
+				$this->matched = $this->choices[$i];
 			}
 		}
 	}

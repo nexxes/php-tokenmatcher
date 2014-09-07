@@ -16,24 +16,12 @@ namespace nexxes\tokenmatcher;
  *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class Choice implements MatcherInterface {
+class Choice extends Matches {
 	/**
 	 * The token type to match the next token on
 	 * @var array<string>
 	 */
-	private $tokenTypes;
-	
-	/**
-	 * Status of the last matching process
-	 * @var mixed
-	 */
-	private $status = self::STATUS_VIRGIN;
-	
-	/**
-	 * The token that matched in the last matching process
-	 * @var \nexxes\tokenizer\Tokenizer
-	 */
-	private $matched;
+	protected $tokenTypes;
 	
 	
 	/**
@@ -70,39 +58,10 @@ class Choice implements MatcherInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function debug() {
-		return clone $this;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function status() {
-		return $this->status;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function success() {
-		return ($this->status === self::STATUS_SUCCESS);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function tokens() {
-		if ($this->status === self::STATUS_SUCCESS) {
-			return [ $this->matched ];
-		} else {
-			return [];
-		}
-	}
-	
-	/**
-	 * {@inheritdoc}
-	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for types (' . \implode(', ', $this->tokenTypes) . ') with status "' . $this->status . '"' . ($this->status === self::STATUS_SUCCESS ? ' matched type ' . $this->matched->type : '');
+		return (new \ReflectionClass(static::class))->getShortName()
+			. ' for types (' . \implode(', ', $this->tokenTypes) . ')'
+			. ' has status "' . $this->status . '"'
+			. ($this->success() ? ' matched type ' . $this->matched->type : '');
 	}
 }

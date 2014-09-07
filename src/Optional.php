@@ -16,24 +16,12 @@ namespace nexxes\tokenmatcher;
  *
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
-class Optional implements MatcherInterface {
-	/**
-	 * @var \nexxes\tokenmatcher\MatcherInterface
-	 */
-	private $matcher;
-	
-	/**
-	 * Status of the last matching process
-	 * @var mixed
-	 */
-	private $status = self::STATUS_VIRGIN;
-	
-	
+class Optional extends Matches {
 	/**
 	 * @param \nexxes\tokenmatcher\MatcherInterface $matcher
 	 */
 	public function __construct(MatcherInterface $matcher) {
-		$this->matcher = $matcher;
+		$this->matched = $matcher; // Matcher is stored in $matched to reuse tokens() method of parent
 	}
 	
 	/**
@@ -42,54 +30,26 @@ class Optional implements MatcherInterface {
 	public function match(array $tokens, $offset = 0) {
 		$this->status = self::STATUS_SUCCESS; // Optional always matches
 		
-		if (false !== ($matched = $this->matcher->match($tokens, $offset))) {
+		if (false !== ($matched = $this->matched->match($tokens, $offset))) {
 			return $matched;
 		} else {
 			return 0;
 		}
 	}
-	
-	/**
-	 * {@inheritdoc}
-	 */
-	public function debug() {
-		return clone $this;
-	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function status() {
-		return $this->status;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function success() {
-		return ($this->status === self::STATUS_SUCCESS);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function tokens() {
-		if ($this->matcher->status() === self::STATUS_SUCCESS) {
-			return $this->matcher->tokens();
-		} else {
-			return [];
-		}
-	}
-	
 	/**
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName() . ' with status "' . $this->status . '"' . PHP_EOL
-			. self::INDENTATION . \implode(PHP_EOL . self::INDENTATION, \explode(PHP_EOL, (string)$this->matcher));
+		return (new \ReflectionClass(static::class))->getShortName()
+			. ' has status "' . $this->status . '"' . PHP_EOL
+			. $this->indentArray([$this->matched]);
 	}
 	
+	/**
+	 * Deep copy object
+	 */
 	public function __clone() {
-		$this->matcher = $this->matcher->debug();
+		$this->matched = clone $this->matched;
 	}
 }
