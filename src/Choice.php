@@ -11,6 +11,8 @@
 
 namespace nexxes\tokenmatcher;
 
+use \nexxes\tokenizer\Token;
+
 /**
  * The Choice matcher tries to match the next token to one of the stored tokens.
  *
@@ -60,8 +62,8 @@ class Choice extends Matches {
 	 */
 	public function __toString() {
 		return (new \ReflectionClass(static::class))->getShortName()
-			. ' for types (' . \implode(', ', $this->tokenTypes) . ')'
+			. ' for types (' . \implode(', ', \array_map([Token::class, 'typeName'], $this->tokenTypes)) . ')'
 			. ' has status "' . $this->status . '"'
-			. ($this->success() ? ' matched type ' . $this->matched->type : '');
+			. ($this->success() ? ' matched type ' . Token::typeName($this->matched->type) : '');
 	}
 }

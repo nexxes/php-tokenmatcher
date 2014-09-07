@@ -11,6 +11,8 @@
 
 namespace nexxes\tokenmatcher;
 
+use \nexxes\tokenizer\Token;
+
 /**
  * Matches the length of the raw text that was matched, e.g. on the total raw length of a Sequence.
  * Raw length can be compared to the reference length with on of <, <=, ==, >=, >,
@@ -106,6 +108,7 @@ class Length extends Matches {
 	public function __toString() {
 		return (new \ReflectionClass(static::class))->getShortName()
 			. ' checked ' . $this->lastLength . ' ' . $this->compare . ' ' . $this->length
+			. (\count($this->ignore) ? ' ignored ' . \implode(', ', \array_map([Token::class, 'typeName'], $this->ignore)) : '')
 			. ' has status "' . $this->status . '"'
 			. PHP_EOL . $this->indentArray( [$this->matched] );
 	}

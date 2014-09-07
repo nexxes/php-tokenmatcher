@@ -124,7 +124,7 @@ class Matches implements MatcherInterface {
 	 */
 	public function __toString() {
 		return (new \ReflectionClass(static::class))->getShortName()
-			. ' for type "' . $this->tokenType . '"'
+			. ' for type "' . Token::typeName($this->tokenType) . '"'
 			. ' has status "' . $this->status . '"';
 	}
 	
