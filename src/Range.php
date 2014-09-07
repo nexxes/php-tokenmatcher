@@ -129,7 +129,6 @@ class Range extends Matches {
 			. ' for limits {' . $this->min . ', ' . $this->max . '}'
 			. ' has status "' . $this->status . '"'
 			. (\count($this->executedMatcher) ? ' had ' . (\count($this->executedMatcher) - ($this->executedMatcher[\count($this->executedMatcher)-1]->success() ? 0 : 1)) . ' successful matches' : '')
-			. PHP_EOL
-			. $this->indentArray($this->executedMatcher);
+			. (\count($this->executedMatcher) ? PHP_EOL	. $this->indentArray($this->executedMatcher) : '');
 	}
 }
