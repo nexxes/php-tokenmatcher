@@ -40,7 +40,23 @@ class Range implements MatcherInterface {
 	 */
 	private $max;
 	
+	/**
+	 * Status of the last matching process, null means not matched yet
+	 * @var mixed
+	 */
+	private $status = self::STATUS_VIRGIN;
 	
+	/**
+	 * The token that matched in the last matching process
+	 * @var \nexxes\tokenizer\Token
+	 */
+	private $matched;
+	
+	/**
+	 * List of the matcher objects executed during the last run
+	 * @var array<\nexxes\tokenmatcher\MatcherInterface>
+	 */
+	private $executedMatcher = [];
 	
 	
 	/**
@@ -66,11 +82,17 @@ class Range implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function match(array $tokens, $offset = 0) {
-		$count = 0; // Number of matches
+		$this->matched = []; // Clean old results
+		$this->executedMatcher = []; // Clean old debug info
+		
 		$consumed = 0; // Number of tokens consumed
 		
-		while (($count < $this->max) && (false !== ($matched = $this->matcher->match($tokens, $offset+$consumed)))) {
-			$count++;
+		while (\count($this->executedMatcher) < $this->max) {
+			$matched = $this->matcher->match($tokens, $offset+$consumed);
+			$this->executedMatcher[] = $this->matcher->debug(); // Safe debug information
+			
+			// End of matching process
+			if (false === $matched) { break; }
 			
 			// Do not repeat matchers that are ok but read no tokens (e.g. like an optional matcher)
 			if ($matched === 0) { break; }
@@ -78,7 +100,70 @@ class Range implements MatcherInterface {
 			$consumed += $matched;
 		}
 		
-		return ($count < $this->min ? false : $consumed);
+		
+		if ((0 === $this->min) // We did not need to match anything
+			|| (// Verify matcher has executed at least $min times and the $minth matcher was successful
+				(\count($this->executedMatcher) >= $this->min)
+				&& ($this->executedMatcher[$this->min - 1]->success())
+			)
+		) {
+			$this->status = self::STATUS_SUCCESS;
+			return $consumed;
+		}
+		
+		else {
+			$this->status = self::STATUS_FAILURE;
+			return false;
+		}
 	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function debug() {
+		return clone $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function status() {
+		return $this->status;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function success() {
+		return ($this->status === self::STATUS_SUCCESS);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function tokens() {
+		if ($this->status === self::STATUS_SUCCESS) {
+			$r = [];
+			
+			foreach ($this->executedMatcher AS $matcher) {
+				$r = \array_merge($r, $matcher->tokens());
+			}
+			
+			return $r;
+		} else {
+			return [];
+		}
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString() {
+		return (new \ReflectionClass(__CLASS__))->getShortName()
+			. ' for limits {' . $this->min . ', ' . $this->max . '}'
+			. ' with status "' . $this->status . '"'
+			. (\count($this->executedMatcher) ? ' had ' . (\count($this->executedMatcher) - ($this->executedMatcher[\count($this->executedMatcher)-1]->success() ? 0 : 1)) . ' successful matches' : '')
+			. PHP_EOL
+			. self::INDENTATION . \implode(PHP_EOL . self::INDENTATION, \explode(PHP_EOL, \implode(PHP_EOL, $this->executedMatcher)));
+	}
 }
