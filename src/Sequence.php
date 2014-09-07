@@ -12,7 +12,7 @@
 namespace nexxes\tokenmatcher;
 
 /**
- * A Sequence tries to match a token stream against a sequence of token matchers
+ * A Sequence tries to match a token stream against a sequence of token matchers.
  * 
  * @author Dennis Birkholz <dennis.birkholz@nexxes.net>
  */
@@ -22,7 +22,11 @@ class Sequence implements MatcherInterface {
 	 */
 	private $sequence = [];
 	
-	
+	/**
+	 * Status of the last matching process, null means not matched yet
+	 * @var mixed
+	 */
+	private $status = self::STATUS_VIRGIN;
 	
 	
 	/**
@@ -40,16 +44,77 @@ class Sequence implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function match(array $tokens, $offset = 0) {
-		$eat = 0;
+		$total = 0;
 		
 		for ($i=0; $i<\count($this->sequence); ++$i) {
-			if (false !== ($matched = $this->sequence[$i]->match($tokens, $offset+$eat))) {
-				$eat += $matched;
-			} else {
+			if (false !== ($matched = $this->sequence[$i]->match($tokens, $offset+$total))) {
+				$total += $matched;
+			}
+			
+			else {
+				$this->status = self::STATUS_FAILURE;
 				return false;
 			}
 		}
 		
-		return $eat;
+		$this->status = self::STATUS_SUCCESS;
+		return $total;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function debug() {
+		return clone $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function status() {
+		return $this->status;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function success() {
+		return ($this->status === self::STATUS_SUCCESS);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function tokens() {
+		if ($this->status === self::STATUS_SUCCESS) {
+			$r = [];
+			foreach ($this->sequence AS $matcher) {
+				$r = \array_merge($r, $matcher->tokens());
+			}
+			return $r;
+		}
+		
+		else {
+			return [];
+		}
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString() {
+		return (new \ReflectionClass(__CLASS__))->getShortName()
+			. ' with status "' . $this->status . '"'
+			. PHP_EOL
+			. self::INDENTATION . \str_replace(PHP_EOL, PHP_EOL . self::INDENTATION, \implode(PHP_EOL, $this->sequence));
+	}
+	
+	/**
+	 * Deep clone object
+	 */
+	public function __clone() {
+		for ($i=0; $i<\count($this->sequence); ++$i) {
+			$this->sequence[$i] = clone $this->sequence[$i];
+		}
 	}
 }
