@@ -164,6 +164,6 @@ class Range implements MatcherInterface {
 			. ' with status "' . $this->status . '"'
 			. (\count($this->executedMatcher) ? ' had ' . (\count($this->executedMatcher) - ($this->executedMatcher[\count($this->executedMatcher)-1]->success() ? 0 : 1)) . ' successful matches' : '')
 			. PHP_EOL
-			. self::INDENTATION . \implode(PHP_EOL . self::INDENTATION, \explode(PHP_EOL, \implode(PHP_EOL, $this->executedMatcher)));
+			. self::INDENTATION . \str_replace(PHP_EOL, PHP_EOL . self::INDENTATION, \implode(PHP_EOL, $this->executedMatcher));
 	}
 }

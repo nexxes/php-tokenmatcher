@@ -102,7 +102,6 @@ class RangeTest extends TestBase {
 		
 		// Match 4th to 6th whitespace
 		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 5, 3), $tokens, 5);
-		echo $matcher . PHP_EOL;
 		
 		// Match 5th and 6th whitespace
 		$this->assertExecuteSuccess($matcher, \array_slice($tokens, 6, 2), $tokens, 6);
