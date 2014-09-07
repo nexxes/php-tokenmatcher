@@ -77,7 +77,5 @@ class OptionalTest extends \PHPUnit_Framework_TestCase {
 		$this->assertCount(1, $debug->tokens());
 		$this->assertSame($tokens[0], $debug->tokens()[0]);
 		$this->assertSame($debugString, (string)$debug);
-		
-		echo $debug . PHP_EOL;
 	}
 }
