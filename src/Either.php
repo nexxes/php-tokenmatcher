@@ -45,17 +45,6 @@ class Either implements MatcherInterface {
 	 */
 	public function __construct(MatcherInterface $firstPattern, MatcherInterface $secondPattern = null, MatcherInterface $thirdMatcher = null) {
 		$this->choices = \func_get_args();
-		
-		/*
-		$args = \func_get_args();
-		
-		foreach ($args AS $matcher) {
-			if (\in_array($matcher, $this->choices, true)) {
-				$this->choices[] = clone $matcher;
-			} else {
-				$this->choices[] = $matcher;
-			}
-		}*/
 	}
 	
 	/**
