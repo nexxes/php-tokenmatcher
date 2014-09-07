@@ -105,6 +105,6 @@ class Matches implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for type: "' . $this->tokenType . '", status: "' . $this->status . '"' . PHP_EOL;
+		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for type "' . $this->tokenType . '" with status "' . $this->status . '"';
 	}
 }

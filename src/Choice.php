@@ -103,6 +103,6 @@ class Choice implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for types (' . \implode(', ', $this->tokenTypes) . '), status: "' . $this->status . '"' . ($this->status === self::STATUS_SUCCESS ? ', matched type ' . $this->matched->type : '') . PHP_EOL;
+		return (new \ReflectionClass(__CLASS__))->getShortName() . ' for types (' . \implode(', ', $this->tokenTypes) . ') with status "' . $this->status . '"' . ($this->status === self::STATUS_SUCCESS ? ' matched type ' . $this->matched->type : '');
 	}
 }

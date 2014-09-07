@@ -25,6 +25,11 @@ interface MatcherInterface {
 	const STATUS_FAILURE = 'Token type did not match.';
 	
 	/**
+	 * Preprended to every line of the string dump of a dependent matcher
+	 */
+	const INDENTATION = '  ';
+	
+	/**
 	 * Try to match the pattern on the supplied token list.
 	 * Returns FALSE if no match could be found or the number of tokens that are required to match this pattern.
 	 * 

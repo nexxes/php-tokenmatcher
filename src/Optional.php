@@ -23,6 +23,13 @@ class Optional implements MatcherInterface {
 	private $matcher;
 	
 	/**
+	 * Status of the last matching process, null means not matched yet
+	 * @var mixed
+	 */
+	private $status = self::STATUS_VIRGIN;
+	
+	
+	/**
 	 * @param \nexxes\tokenmatcher\MatcherInterface $matcher
 	 */
 	public function __construct(MatcherInterface $matcher) {
@@ -33,6 +40,56 @@ class Optional implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function match(array $tokens, $offset = 0) {
-		return (false !== ($matched = $this->matcher->match($tokens, $offset)) ? $matched : 0);
+		$this->status = self::STATUS_SUCCESS; // Optional always matches
+		
+		if (false !== ($matched = $this->matcher->match($tokens, $offset))) {
+			return $matched;
+		} else {
+			return 0;
+		}
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function debug() {
+		return clone $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function status() {
+		return $this->status;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function success() {
+		return ($this->status === self::STATUS_SUCCESS);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function tokens() {
+		if ($this->matcher->status() === self::STATUS_SUCCESS) {
+			return $this->matcher->tokens();
+		} else {
+			return [];
+		}
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString() {
+		return (new \ReflectionClass(__CLASS__))->getShortName() . ' with status "' . $this->status . '"' . PHP_EOL
+			. self::INDENTATION . \implode(PHP_EOL . self::INDENTATION, \explode(PHP_EOL, (string)$this->matcher));
+	}
+	
+	public function __clone() {
+		$this->matcher = $this->matcher->debug();
 	}
 }
