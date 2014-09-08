@@ -21,5 +21,9 @@
 	"require": {
 		"php": ">=5.4.0",
 		"nexxes/tokenizer": "dev-master"
-	}
+	},
+	
+	"repositories": [
+		{ "type": "vcs", "url": "https://github.com/dennisbirkholz/nexxes-php-tokenizer" }
+	]
 }
