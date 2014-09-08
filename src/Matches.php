@@ -123,7 +123,7 @@ class Matches implements MatcherInterface {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(static::class))->getShortName()
+		return (new \ReflectionClass(\get_class($this)))->getShortName()
 			. ' for type "' . Token::typeName($this->tokenType) . '"'
 			. ' has status "' . $this->status . '"';
 	}

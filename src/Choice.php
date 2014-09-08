@@ -61,7 +61,7 @@ class Choice extends Matches {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(static::class))->getShortName()
+		return (new \ReflectionClass(\get_class($this)))->getShortName()
 			. ' for types (' . \implode(', ', \array_map([Token::class, 'typeName'], $this->tokenTypes)) . ')'
 			. ' has status "' . $this->status . '"'
 			. ($this->success() ? ' matched type ' . Token::typeName($this->matched->type) : '');

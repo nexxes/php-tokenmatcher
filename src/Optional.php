@@ -41,7 +41,7 @@ class Optional extends Matches {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(static::class))->getShortName()
+		return (new \ReflectionClass(\get_class($this)))->getShortName()
 			. ' has status "' . $this->status . '"' . PHP_EOL
 			. $this->indentArray([$this->matched]);
 	}

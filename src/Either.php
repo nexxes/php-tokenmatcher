@@ -62,7 +62,7 @@ class Either extends Matches {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(static::class))->getShortName()
+		return (new \ReflectionClass(\get_class($this)))->getShortName()
 			. ' has status "' . $this->status . '"'
 			. ($this->success() ? ' matches choice #' . (\array_search($this->matched, $this->choices, true)+1) : '')
 			. PHP_EOL

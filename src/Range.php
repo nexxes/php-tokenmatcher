@@ -125,7 +125,7 @@ class Range extends Matches {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(static::class))->getShortName()
+		return (new \ReflectionClass(\get_class($this)))->getShortName()
 			. ' for limits {' . $this->min . ', ' . $this->max . '}'
 			. ' has status "' . $this->status . '"'
 			. (\count($this->executedMatcher) ? ' had ' . (\count($this->executedMatcher) - ($this->executedMatcher[\count($this->executedMatcher)-1]->success() ? 0 : 1)) . ' successful matches' : '')

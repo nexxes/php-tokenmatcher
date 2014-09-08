@@ -106,7 +106,7 @@ class Length extends Matches {
 	 * {@inheritdoc}
 	 */
 	public function __toString() {
-		return (new \ReflectionClass(static::class))->getShortName()
+		return (new \ReflectionClass(\get_class($this)))->getShortName()
 			. ' checked ' . $this->lastLength . ' ' . $this->compare . ' ' . $this->length
 			. (\count($this->ignore) ? ' ignored ' . \implode(', ', \array_map([Token::class, 'typeName'], $this->ignore)) : '')
 			. ' has status "' . $this->status . '"'
