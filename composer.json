@@ -20,6 +20,6 @@
 	
 	"require": {
 		"php": ">=5.4.0",
-		"nexxes/tokenizer": "*"
+		"nexxes/tokenizer": "dev-master"
 	}
 }
