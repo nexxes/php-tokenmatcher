@@ -108,7 +108,7 @@ class Length extends Matches {
 	public function __toString() {
 		return (new \ReflectionClass(\get_class($this)))->getShortName()
 			. ' checked ' . $this->lastLength . ' ' . $this->compare . ' ' . $this->length
-			. (\count($this->ignore) ? ' ignored ' . \implode(', ', \array_map([Token::class, 'typeName'], $this->ignore)) : '')
+			. (\count($this->ignore) ? ' ignored ' . \implode(', ', \array_map(['\\nexxes\\tokenizer\\Token', 'typeName'], $this->ignore)) : '')
 			. ' has status "' . $this->status . '"'
 			. PHP_EOL . $this->indentArray( [$this->matched] );
 	}
