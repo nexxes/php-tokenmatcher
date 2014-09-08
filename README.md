@@ -1,10 +1,26 @@
-php-tokenmatcher
-================
+Package nexxes/tokenmatcher
+===========================
+
+[![Build Status](https://travis-ci.org/nexxes/php-tokenmatcher.svg?branch=master)](https://travis-ci.org/nexxes/php-tokenmatcher)
 
 PHP library to match tokenstreams (arrays of tokens) for later parsing.
 
 The tokenmatcher library depends on the tokenizer package.
 To use, you have to tokenize a string or construct a token stream yourself.
+
+Installation
+------------
+
+Use composer:
+``` json
+"require": {
+	"nexxes/tokenmatcher": "dev-master"
+}
+```
+
+The library is currently under development and the API not stable yet.
+The development is based on features required to create a working and standard compliant [CommonMark](http://commonmark.org "CommonMark") parser. See our [nexxes/commonmark](https://github.com/nexxes/commonmark "nexxes/commonmark") package.
+
 
 Match a token
 -------------
