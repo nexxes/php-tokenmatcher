@@ -4,6 +4,6 @@ php:
   - 5.4
   - hhvm
 script:
-  phpunit --bootstrap test/autoload.php
+  phpunit --bootstrap test/autoload.php test/
 install:
   composer install
