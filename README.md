@@ -159,14 +159,14 @@ A complex example
 -----------------
 
 The strength of the matchers is their ability to build complex patterns from simple building block.
-The following matcher construct will match a horizontal rule in [commonmark](http://commonmark.org "CommonMark").
+The following matcher construct will match a horizontal rule in [CommonMark](http://commonmark.org "CommonMark").
 The pattern is in textual form:
 * first optional whitespace indentation up to three spaces
 * a star (\*), minus (-) or underscore (_) (marker)
 * optional whitespace followed by the same token as marker was
 * the previous at least so often that the line contains the of the marker characters
 * finally optional whitespace and a newline or the end of the stream
-(a detailed specification can be found in the [commonmark](http://jgm.github.io/stmd/spec.html#horizontal-rules "CommonMark spec").
+(a detailed specification can be found in the [CommonMark spec](http://jgm.github.io/stmd/spec.html#horizontal-rules "CommonMark spec").
 
 The matcher to capture this pattern could be:
 ``` PHP
@@ -187,7 +187,7 @@ $horizontalRulerMatcher = new Length(
 	), 3, '>=', [ Token::NEWLINE, Token::WHITESPACE ]
 );
 ```
-According to the compliance test of [commonmark] this even works!
+According to the compliance test of [CommonMark](http://commonmark.org "CommonMark") this even works!
 
 The two Matchers `Optional` and `Either` have not been mentioned before.
 `Optional` is quite obvious: it matches the contained matcher if it can or not. But it will always succeed.
